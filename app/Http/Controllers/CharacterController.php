@@ -3,65 +3,44 @@
 namespace App\Http\Controllers;
 
 use App\Models\Character;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCharacterRequest;
 use App\Http\Requests\UpdateCharacterRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class CharacterController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        // Lista solo los personajes del usuario
+        return response()->json($request->user()->characters);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreCharacterRequest $request)
     {
-        //
+        // Se crea el personaje asignándole el user_id del usuario logueado automáticamente
+        $character = $request->user()->characters()->create($request->validated());
+
+        return response()->json($character, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Character $character)
     {
-        //
+        Gate::authorize('view', $character);
+        return response()->json($character);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Character $character)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdateCharacterRequest $request, Character $character)
     {
-        //
+        Gate::authorize('update', $character);
+        $character->update($request->validated());
+        return response()->json($character);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Character $character)
     {
-        //
+        Gate::authorize('delete', $character);
+        $character->delete();
+        return response()->json(null, 204);
     }
 }

@@ -2,65 +2,34 @@
 
 namespace App\Policies;
 
-use Illuminate\Auth\Access\Response;
 use App\Models\Character;
 use App\Models\User;
 
 class CharacterPolicy
 {
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
+    public function before(User $user, string $ability): bool|null
     {
-        return false;
+        // El admin puede acceder a todo
+        if ($user->role === 'admin') {
+            return true;
+        }
+
+        return null;
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
     public function view(User $user, Character $character): bool
     {
-        return false;
+        // Un jugador solo puede acceder a sus personajes
+        return $user->id === $character->user_id;
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can update the model.
-     */
     public function update(User $user, Character $character): bool
     {
-        return false;
+        return $user->id === $character->user_id;
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
     public function delete(User $user, Character $character): bool
     {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Character $character): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Character $character): bool
-    {
-        return false;
+        return $user->id === $character->user_id;
     }
 }
