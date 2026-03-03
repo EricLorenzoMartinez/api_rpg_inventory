@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->enum('type', ['weapon', 'armor', 'consumable']);
+            $table->enum('slot', ['head', 'body', 'weapon'])->nullable();
+            $table->integer('power');
             $table->timestamps();
         });
     }

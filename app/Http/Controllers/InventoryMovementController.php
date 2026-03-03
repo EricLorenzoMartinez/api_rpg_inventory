@@ -40,8 +40,8 @@ class InventoryMovementController extends Controller
                 return response()->json(['error' => 'El slot ' . $item->slot . ' ya está ocupado.'], 400);
             }
         }
-        
-        
+
+
         elseif ($type === 'UNEQUIP') {
             $equipment = $this->getEquipmentData($character);
             if (!isset($equipment[$item->slot]) || $equipment[$item->slot]->id !== $item->id) {
