@@ -32,29 +32,29 @@ class InventoryMovementController extends Controller
         if ($type === 'EQUIP') {
             // Ensure the item exists in inventory and is equipable
             if ($inventoryBalance <= 0) {
-                return response()->json(['error' => 'No tienes este ítem en el inventario para equipar.'], 400);
+                return response()->json(['error' => 'You do not have this item in your inventory to equip.'], 400);
             }
             if (!$item->slot) {
-                return response()->json(['error' => 'Este ítem no se puede equipar (consumible).'], 400);
+                return response()->json(['error' => 'This item cannot be equipped (consumable).'], 400);
             }
 
             // Verify if the specific equipment slot is already occupied
             $equipment = $this->getEquipmentData($character);
             if (isset($equipment[$item->slot])) {
-                return response()->json(['error' => 'El slot ' . $item->slot . ' ya está ocupado.'], 400);
+                return response()->json(['error' => 'The slot ' . $item->slot . ' is already occupied.'], 400);
             }
         }
         elseif ($type === 'UNEQUIP') {
             // Verify if the item is actually equipped
             $equipment = $this->getEquipmentData($character);
             if (!isset($equipment[$item->slot]) || $equipment[$item->slot]->id !== $item->id) {
-                return response()->json(['error' => 'No tienes este ítem equipado en este momento.'], 400);
+                return response()->json(['error' => 'You do not have this item equipped at the moment.'], 400);
             }
         }
         elseif ($type === 'DROP') {
             // Verify if there is at least one instance of the item to drop
             if ($inventoryBalance <= 0) {
-                return response()->json(['error' => 'No tienes este ítem para tirar.'], 400);
+                return response()->json(['error' => 'You do not have this item to drop.'], 400);
             }
         }
 

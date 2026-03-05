@@ -11,23 +11,20 @@ use Illuminate\Support\Facades\Gate;
 class ItemController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * DISPLAY A LIST OF ALL ITEMS
      */
     public function index()
     {
         return response()->json(Item::all());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         //
     }
 
     /**
-     * Store a newly created resource in storage.
+     * STORE A NEW ITEM IN THE DATABASE
      */
     public function store(StoreItemRequest $request)
     {
@@ -38,7 +35,7 @@ class ItemController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * DISPLAY THE SPECIFIED ITEM
      */
     public function show(Item $item)
     {
@@ -46,7 +43,7 @@ class ItemController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * UPDATE THE SPECIFIED ITEM IN THE DATABASE
      */
     public function update(UpdateItemRequest $request, Item $item)
     {
@@ -57,7 +54,7 @@ class ItemController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * REMOVE THE SPECIFIED ITEM FROM THE DATABASE
      */
     public function destroy(Item $item)
     {

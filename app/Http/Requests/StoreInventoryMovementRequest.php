@@ -6,18 +6,17 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreInventoryMovementRequest extends FormRequest
 {
-    //--------------------
-    // AUTHORIZE THE REQUEST
-    //--------------------
+    /**
+     * DETERMINE IF THE USER IS AUTHORIZED TO MAKE THIS REQUEST
+     */
     public function authorize(): bool
     {
-        // Allow the user to proceed with this request
         return true;
     }
 
-    //--------------------
-    // GET THE VALIDATION RULES
-    //--------------------
+    /**
+     * GET THE VALIDATION RULES THAT APPLY TO THE REQUEST
+     */
     public function rules(): array
     {
         // Define the validation rules for a new inventory movement

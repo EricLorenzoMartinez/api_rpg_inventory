@@ -13,11 +13,11 @@ class MongoLogService
     {
         // Use the MongoDB connection to insert a new log entry into the logs table
         DB::connection('mongodb')->table('logs')->insert([
-            'action' => $action,             
-            'user_id' => $userId,            
-            'character_id' => $characterId,  
-            'item_id' => $itemId,            
-            'metadata' => $metadata,         
+            'action' => $action,
+            'user_id' => $userId,
+            'character_id' => $characterId,
+            'item_id' => $itemId,
+            'metadata' => $metadata,
             'created_at' => now()->toIso8601String(),
         ]);
     }

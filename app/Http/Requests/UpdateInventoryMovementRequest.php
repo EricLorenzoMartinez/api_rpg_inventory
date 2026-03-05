@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 class UpdateInventoryMovementRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
+     * DETERMINE IF THE USER IS AUTHORIZED TO MAKE THIS REQUEST
      */
     public function authorize(): bool
     {
@@ -15,9 +15,7 @@ class UpdateInventoryMovementRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * GET THE VALIDATION RULES THAT APPLY TO THE REQUEST
      */
     public function rules(): array
     {
