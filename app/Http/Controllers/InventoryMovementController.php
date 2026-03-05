@@ -62,6 +62,18 @@ class InventoryMovementController extends Controller
             'executed_at' => now(),
         ]);
 
+        $logService->recordLog(
+            action: 'inventory_movement_created',
+            userId: $request->user()->id,
+            metadata: [
+                'movement_type' => $type,
+                'item_name' => $item->name,
+                'slot_affected' => $item->slot
+            ],
+            characterId: $character->id,
+            itemId: $item->id
+        );
+
         return response()->json($movement, 201);
     }
 

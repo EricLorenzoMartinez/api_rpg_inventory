@@ -21,6 +21,16 @@ class CharacterController extends Controller
         // Se crea el personaje asignándole el user_id del usuario logueado automáticamente
         $character = $request->user()->characters()->create($request->validated());
 
+        $logService->recordLog(
+            action: 'character_created',
+            userId: $request->user()->id,
+            metadata: [
+                'name' => $character->name, 
+                'level' => $character->level
+            ],
+            characterId: $character->id
+        );
+
         return response()->json($character, 201);
     }
 
