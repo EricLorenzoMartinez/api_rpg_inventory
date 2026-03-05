@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'sqlite'),
+    'default' => env('DB_CONNECTION', 'mysql'),
 
     /*
     |--------------------------------------------------------------------------
@@ -61,6 +61,19 @@ return [
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 (PHP_VERSION_ID >= 80500 ? \Pdo\Mysql::ATTR_SSL_CA : \PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
+        ],
+
+        // ¡AQUÍ ESTÁ LA CONEXIÓN DE MONGODB!
+        'mongodb' => [
+            'driver' => 'mongodb',
+            'host' => env('MONGODB_HOST', '127.0.0.1'),
+            'port' => env('MONGODB_PORT', 27017),
+            'database' => env('MONGODB_DATABASE', 'rpg_inventory_logs'),
+            'username' => env('MONGODB_USERNAME', ''),
+            'password' => env('MONGODB_PASSWORD', ''),
+            'options' => [
+                'database' => env('MONGODB_AUTHENTICATION_DATABASE', 'admin'),
+            ],
         ],
 
         'mariadb' => [
