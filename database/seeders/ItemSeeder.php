@@ -7,9 +7,12 @@ use App\Models\Item;
 
 class ItemSeeder extends Seeder
 {
+    //--------------------
+    // RUN THE SEEDER
+    //--------------------
     public function run(): void
     {
-        // 6 Armas (slot: 'weapon') [cite: 167]
+        // Generate 6 Weapons (assigned to the 'weapon' slot)
         for ($i = 1; $i <= 6; $i++) {
             Item::create([
                 'name' => "Espada Nivel $i",
@@ -19,7 +22,7 @@ class ItemSeeder extends Seeder
             ]);
         }
 
-        // 6 Armaduras: 3 Cascos ('head') y 3 Pecheras ('body') [cite: 168]
+        // Generate 6 Armor pieces: 3 Helmets ('head') and 3 Chestplates ('body')
         for ($i = 1; $i <= 3; $i++) {
             Item::create([
                 'name' => "Casco de Hierro $i",
@@ -28,6 +31,7 @@ class ItemSeeder extends Seeder
                 'power' => rand(10, 50),
             ]);
         }
+        
         for ($i = 1; $i <= 3; $i++) {
             Item::create([
                 'name' => "Pechera de Acero $i",
@@ -37,7 +41,7 @@ class ItemSeeder extends Seeder
             ]);
         }
 
-        // 6 Consumibles (slot: null) [cite: 169]
+        // Generate 6 Consumables (these do not have an equipment slot)
         for ($i = 1; $i <= 6; $i++) {
             Item::create([
                 'name' => "Poción de Curación $i",

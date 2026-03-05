@@ -8,9 +8,12 @@ use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
+    //--------------------
+    // RUN THE SEEDER
+    //--------------------
     public function run(): void
     {
-        // 1. Creamos 1 Admin [cite: 158]
+        // 1. Create a single Admin user
         User::create([
             'name' => 'Admin User',
             'email' => 'admin@example.com',
@@ -18,7 +21,7 @@ class UserSeeder extends Seeder
             'role' => 'admin',
         ]);
 
-        // 2. Creamos 3 Players [cite: 159]
+        // 2. Create 3 standard Player users
         for ($i = 1; $i <= 3; $i++) {
             User::create([
                 'name' => "Jugador $i",

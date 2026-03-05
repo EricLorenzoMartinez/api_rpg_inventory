@@ -9,6 +9,9 @@ class Item extends Model
 {
     use HasFactory;
 
+    //--------------------
+    // MASS ASSIGNABLE ATTRIBUTES
+    //--------------------
     protected $fillable = [
         'name',
         'type',
