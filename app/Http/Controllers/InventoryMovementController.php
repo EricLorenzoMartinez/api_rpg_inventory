@@ -6,12 +6,14 @@ use App\Models\Character;
 use App\Models\Item;
 use App\Models\InventoryMovement;
 use App\Http\Requests\StoreInventoryMovementRequest;
+use App\Services\MongoLogService; // <-- ¡Faltaba importar esto!
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class InventoryMovementController extends Controller
 {
-    public function store(StoreInventoryMovementRequest $request)
+    // ¡AÑADIDO!: Inyección de MongoLogService en los parámetros
+    public function store(StoreInventoryMovementRequest $request, MongoLogService $logService)
     {
         $validated = $request->validated();
         $character = Character::findOrFail($validated['character_id']);
@@ -40,8 +42,6 @@ class InventoryMovementController extends Controller
                 return response()->json(['error' => 'El slot ' . $item->slot . ' ya está ocupado.'], 400);
             }
         }
-
-
         elseif ($type === 'UNEQUIP') {
             $equipment = $this->getEquipmentData($character);
             if (!isset($equipment[$item->slot]) || $equipment[$item->slot]->id !== $item->id) {
@@ -81,25 +81,38 @@ class InventoryMovementController extends Controller
     {
         Gate::authorize('view', $character);
 
-        $movements = $character->inventoryMovements()->with('item')->get();
+        // MEJORADO: Lógica secuencial para mantener el ítem visible aunque se equipe,
+        // devolviendo los datos requeridos (id, name, type, slot, power)
+        $movements = $character->inventoryMovements()->with('item')->orderBy('id', 'asc')->get();
         $inventory = [];
 
         foreach ($movements as $mov) {
-            $itemId = $mov->item_id;
-            if (!isset($inventory[$itemId])) {
-                $inventory[$itemId] = ['item' => $mov->item, 'quantity' => 0];
-            }
+            $item = $mov->item;
+            $itemId = $item->id;
 
-            if ($mov->type === 'LOOT' || $mov->type === 'UNEQUIP') {
-                $inventory[$itemId]['quantity'] += 1;
-            } elseif ($mov->type === 'EQUIP' || $mov->type === 'DROP') {
-                $inventory[$itemId]['quantity'] -= 1;
+            if ($mov->type === 'LOOT') {
+                $inventory[$itemId] = [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'type' => $item->type,
+                    'slot' => $item->slot,
+                    'power' => $item->power,
+                    'status' => 'unequipped'
+                ];
+            } elseif ($mov->type === 'EQUIP') {
+                if (isset($inventory[$itemId])) {
+                    $inventory[$itemId]['status'] = 'equipped';
+                }
+            } elseif ($mov->type === 'UNEQUIP') {
+                if (isset($inventory[$itemId])) {
+                    $inventory[$itemId]['status'] = 'unequipped';
+                }
+            } elseif ($mov->type === 'DROP') {
+                unset($inventory[$itemId]);
             }
         }
 
-        // Devolver solo los que tengan cantidad > 0
-        $filtered = array_filter($inventory, fn($i) => $i['quantity'] > 0);
-        return response()->json(array_values($filtered));
+        return response()->json(array_values($inventory));
     }
 
     public function equipment(Character $character)
@@ -113,7 +126,7 @@ class InventoryMovementController extends Controller
     private function getEquipmentData(Character $character)
     {
         $movements = $character->inventoryMovements()->with('item')
-            ->whereIn('type', ['EQUIP', 'UNEQUIP'])->get();
+            ->whereIn('type', ['EQUIP', 'UNEQUIP'])->orderBy('id', 'asc')->get();
         $equipment = [];
 
         foreach ($movements as $mov) {
