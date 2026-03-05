@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    //--------------------
-    // REGISTER A NEW USER
-    //--------------------
+    /**
+     * REGISTER A NEW USER
+     */
     public function register(Request $request)
     {
         // Validate the incoming request data
@@ -40,9 +40,9 @@ class AuthController extends Controller
         ], 201);
     }
 
-    //--------------------
-    // LOGIN A USER
-    //--------------------
+    /**
+     * LOGIN AN EXISTING USER
+     */
     public function login(Request $request)
     {
         // Validate the incoming request data

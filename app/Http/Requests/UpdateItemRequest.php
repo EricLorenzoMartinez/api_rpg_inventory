@@ -6,11 +6,17 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateItemRequest extends FormRequest
 {
+    /**
+     * DETERMINE IF THE USER IS AUTHORIZED TO MAKE THIS REQUEST
+     */
     public function authorize(): bool
     {
         return true;
     }
 
+    /**
+     * GET THE VALIDATION RULES THAT APPLY TO THE REQUEST
+     */
     public function rules(): array
     {
         return [
@@ -22,7 +28,7 @@ class UpdateItemRequest extends FormRequest
     }
 
     /**
-     * Configure the validator instance to add custom validation logic after the default rules are applied.
+     * CONFIGURE THE VALIDATOR INSTANCE TO ADD CUSTOM VALIDATION LOGIC
      */
     public function withValidator($validator)
     {
@@ -31,13 +37,13 @@ class UpdateItemRequest extends FormRequest
             $slot = $this->input('slot');
 
             if ($type === 'consumable' && $slot !== null) {
-                $validator->errors()->add('slot', 'Los consumibles no se pueden equipar (el slot debe ser nulo).');
+                $validator->errors()->add('slot', 'Consumables can not be equipped (slot must be null).');
             }
             if ($type === 'weapon' && $slot !== 'weapon') {
-                $validator->errors()->add('slot', 'Las armas deben ir equipadas en el slot "weapon".');
+                $validator->errors()->add('slot', 'Weapons must be equipped in the "weapon" slot.');
             }
             if ($type === 'armor' && !in_array($slot, ['head', 'body'])) {
-                $validator->errors()->add('slot', 'Las armaduras deben ir equipadas en "head" o "body".');
+                $validator->errors()->add('slot', 'Armors must be equipped in the "head" or "body" slot.');
             }
         });
     }

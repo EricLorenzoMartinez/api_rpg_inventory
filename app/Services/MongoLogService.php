@@ -10,11 +10,11 @@ class MongoLogService
     {
         // Usamos table() en lugar de collection() para la versión moderna del driver
         DB::connection('mongodb')->table('logs')->insert([
-            'action' => $action,             
-            'user_id' => $userId,            
-            'character_id' => $characterId,  
-            'item_id' => $itemId,            
-            'metadata' => $metadata,         
+            'action' => $action,
+            'user_id' => $userId,
+            'character_id' => $characterId,
+            'item_id' => $itemId,
+            'metadata' => $metadata,
             'created_at' => now()->toIso8601String(),
         ]);
     }

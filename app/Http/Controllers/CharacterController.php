@@ -25,7 +25,7 @@ class CharacterController extends Controller
             action: 'character_created',
             userId: $request->user()->id,
             metadata: [
-                'name' => $character->name, 
+                'name' => $character->name,
                 'level' => $character->level
             ],
             characterId: $character->id
