@@ -20,4 +20,9 @@ class Character extends Model
         // Relación obligatoria con users
         return $this->belongsTo(User::class);
     }
+
+    public function inventoryMovements()
+    {
+        return $this->hasMany(InventoryMovement::class);
+    }
 }

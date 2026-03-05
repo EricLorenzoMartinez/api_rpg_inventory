@@ -20,7 +20,7 @@ class CharacterPolicy
     public function view(User $user, Character $character): bool
     {
         // Un jugador solo puede acceder a sus personajes
-        return $user->id === $character->user_id;
+        return $user->id === $character->user_id || $user->role === 'admin';
     }
 
     public function update(User $user, Character $character): bool
