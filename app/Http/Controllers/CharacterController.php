@@ -43,4 +43,40 @@ class CharacterController extends Controller
         $character->delete();
         return response()->json(null, 204);
     }
+
+    public function equipment(Character $character)
+    {
+        // Validate policy
+        Gate::authorize('view', $character);
+
+        // Get all movements of the character
+        $movements = $character->inventoryMovements()
+            ->with('item')
+            ->orderBy('executed_at', 'asc')
+            ->get();
+
+        // Prepare base structure
+        $equipped = [
+            'head' => null,
+            'body' => null,
+            'weapon' => null,
+        ];
+
+        foreach ($movements as $movement) {
+            $item = $movement->item;
+
+            if (!$item || !$item->slot) {
+                continue; // Skip if item or slot is not defined
+            }
+
+            if ($movement->type === 'EQUIP') {
+                $equipped[$item->slot] = $item;
+            } elseif (in_array($movement->type, ['UNEQUIP', 'DROP'])) {
+                if ($equipped[$item->slot]?->id === $item->id) {
+                    $equipped[$item->slot] = null;
+                }
+            }
+        }
+        return response()->json($equipped);
+    }
 }
