@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('characters', function (Blueprint $table) {
             $table->id();
+            $table->string('name'); // El nombre del personaje
+            $table->integer('level'); // El nivel (número entero)
+            
+            // Relación obligatoria con la tabla users (si se borra el user, se borran sus personajes)
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); 
+            
             $table->timestamps();
         });
     }
