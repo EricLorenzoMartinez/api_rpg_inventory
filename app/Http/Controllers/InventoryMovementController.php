@@ -100,16 +100,32 @@ class InventoryMovementController extends Controller
 
     private function getEquipmentData(Character $character)
     {
+        // Return always all the structure
+        $equipment = [
+            'head' => null,
+            'body' => null,
+            'weapon' => null,
+        ];
+
+        // Order by date
         $movements = $character->inventoryMovements()->with('item')
-            ->whereIn('type', ['EQUIP', 'UNEQUIP'])->get();
-        $equipment = [];
+            ->whereIn('type', ['EQUIP', 'UNEQUIP', 'DROP'])
+            ->orderBy('executed_at', 'asc')
+            ->get();
 
         foreach ($movements as $mov) {
-            $slot = $mov->item->slot;
+            $item = $mov->item;
+            if (!$item || !$item->slot) {
+                continue; // Ignore if item or slot is not defined
+            }
+
             if ($mov->type === 'EQUIP') {
-                $equipment[$slot] = $mov->item;
-            } elseif ($mov->type === 'UNEQUIP') {
-                unset($equipment[$slot]);
+                $equipment[$item->slot] = $item;
+            } elseif (in_array($mov->type, ['UNEQUIP', 'DROP'])) {
+                // If we unequip or drop, we only set to null the currently equipped item
+                if ($equipment[$item->slot]?->id === $item->id) {
+                    $equipment[$item->slot] = null;
+                }
             }
         }
         return $equipment;

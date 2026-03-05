@@ -29,7 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Characters
     Route::apiResource('characters', CharacterController::class);
     Route::get('/characters/{character}/inventory', [InventoryMovementController::class, 'inventory']);
-    Route::get('/characters/{character}/equipment', [CharacterController::class, 'equipment']);
+    Route::get('/characters/{character}/equipment', [InventoryMovementController::class, 'equipment']);
 
     // Items
     Route::post('/items', [ItemController::class, 'store']);
