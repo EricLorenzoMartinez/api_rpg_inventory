@@ -10,20 +10,25 @@ use App\Services\MongoLogService;
 
 class InventoryMovementSeeder extends Seeder
 {
+    //--------------------
+    // RUN THE SEEDER
+    //--------------------
     public function run(MongoLogService $logService): void
     {
+        // Retrieve necessary data for seeding movements
         $characters = Character::all();
         $weapons = Item::where('type', 'weapon')->get();
         $heads = Item::where('slot', 'head')->get();
         $bodies = Item::where('slot', 'body')->get();
         $consumables = Item::where('type', 'consumable')->get();
 
+        // Ensure prerequisite data exists before proceeding
         if ($characters->count() < 6 || $weapons->isEmpty() || $consumables->isEmpty()) {
             $this->command->warn('Faltan personajes o ítems. Revisa el DatabaseSeeder.');
             return;
         }
 
-        // Función "helper" para crear el movimiento en MySQL y el log en Mongo de un solo golpe
+        // Helper function to create both MySQL movement and MongoDB log entries simultaneously
         $makeMovement = function ($char, $item, $type) use ($logService) {
             InventoryMovement::create([
                 'character_id' => $char->id,
@@ -41,12 +46,15 @@ class InventoryMovementSeeder extends Seeder
             );
         };
 
-        // --- CASOS OBLIGATORIOS ---
-        $char1 = $characters[0]; // Caso 1: Full Equipado
-        $char2 = $characters[1]; // Caso 2: Inventario con cosas, pero sin equipar
-        $char3 = $characters[2]; // Caso 3: Inventario vacío
+        //--------------------
+        // MANDATORY TEST CASES
+        //--------------------
+        
+        $char1 = $characters[0]; // Case 1: Fully Equipped
+        $char2 = $characters[1]; // Case 2: Items in inventory but unequipped
+        $char3 = $characters[2]; // Case 3: Empty inventory
 
-        // 1. Full Equipado (Arma + Cabeza + Cuerpo) -> 3 LOOT, 3 EQUIP
+        // 1. Fully Equipped (Weapon + Head + Body)
         $makeMovement($char1, $weapons->first(), 'LOOT');
         $makeMovement($char1, $heads->first(), 'LOOT');
         $makeMovement($char1, $bodies->first(), 'LOOT');
@@ -54,13 +62,13 @@ class InventoryMovementSeeder extends Seeder
         $makeMovement($char1, $heads->first(), 'EQUIP');
         $makeMovement($char1, $bodies->first(), 'EQUIP');
 
-        // 2. Inventario con cosas, sin equipar -> 2 LOOT, 1 EQUIP, 1 UNEQUIP (lo deja en la mochila)
+        // 2. Inventory with items, unequipped state
         $makeMovement($char2, $weapons->last(), 'LOOT');
         $makeMovement($char2, $consumables->first(), 'LOOT');
         $makeMovement($char2, $weapons->last(), 'EQUIP');
         $makeMovement($char2, $weapons->last(), 'UNEQUIP');
 
-        // 3. Inventario vacío -> Coge dos cosas y las tira (2 LOOT, 2 DROP)
+        // 3. Empty inventory (Loot then Drop)
         $itemA = $consumables->last();
         $itemB = $weapons->random();
         $makeMovement($char3, $itemA, 'LOOT');
@@ -68,10 +76,11 @@ class InventoryMovementSeeder extends Seeder
         $makeMovement($char3, $itemA, 'DROP');
         $makeMovement($char3, $itemB, 'DROP');
 
-        // --- RELLENO MATEMÁTICO PARA LLEGAR A LOS 60 ---
-        // Hasta aquí llevamos: 7 L, 4 E, 1 U, 2 D (Total: 14)
-        // Nos faltan: 23 L, 6 E, 9 U, 8 D para clavar los 60 exactos
+        //--------------------
+        // MATHEMATICAL FILLER
+        //--------------------
         
+        // Populate additional movements to reach exactly 60 records
         $otherChars = [$characters[3], $characters[4], $characters[5]];
 
         for ($i = 0; $i < 23; $i++) { $makeMovement($otherChars[$i % 3], $consumables->random(), 'LOOT'); }

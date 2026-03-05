@@ -9,24 +9,27 @@ use App\Services\MongoLogService;
 
 class CharacterSeeder extends Seeder
 {
-    // Inyectamos el servicio de Mongo igual que en el controlador
+    //--------------------
+    // RUN THE SEEDER
+    //--------------------
     public function run(MongoLogService $logService): void
     {
-        // Buscamos a los jugadores (creados por el seeder de tu compañero)
+        // Retrieve all users with the player role
         $players = User::where('role', 'player')->get();
 
+        // Check if there are any players available to assign characters
         if ($players->isEmpty()) {
             $this->command->warn('¡No hay jugadores! Asegúrate de que tu compañero haya hecho el UserSeeder.');
             return;
         }
 
-        // Creamos 2 personajes por jugador (mínimo 6 en total)
+        // Create 2 characters for each player and record the creation in logs
         foreach ($players as $player) {
             $characters = Character::factory()->count(2)->create([
                 'user_id' => $player->id,
             ]);
 
-            // Generamos los logs obligatorios en Mongo
+            // Generate the required MongoDB logs for each character created
             foreach ($characters as $char) {
                 $logService->recordLog(
                     action: 'character_created',
