@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('inventory_movements', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('character_id')->constrained()->onDelete('cascade');
+            $table->foreignId('item_id')->constrained()->onDelete('cascade');
+
+            $table->enum('type', ['LOOT', 'EQUIP', 'UNEQUIP', 'DROP']);
+            $table->timestamp('executed_at')->useCurrent();
+
             $table->timestamps();
         });
     }
