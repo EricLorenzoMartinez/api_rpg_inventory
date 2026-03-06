@@ -7,21 +7,21 @@ use App\Models\Character;
 
 class CharacterFactory extends Factory
 {
-    //--------------------
-    // MODEL CONFIGURATION
-    //--------------------
+    /**
+     * The name of the factory's corresponding model.
+     */
     protected $model = Character::class;
 
-    //--------------------
-    // FACTORY DEFINITION
-    //--------------------
+    /**
+     * Define the model's default state.
+     */
     public function definition(): array
     {
-        // Define the default state for the Character model using fake data
+        /** Define the default state for the Character model using fake data */
         return [
             'name' => $this->faker->firstName() . ' el ' . $this->faker->word(),
             'level' => $this->faker->numberBetween(1, 50),
-            // The 'user_id' will be provided directly from the Seeder
+            /** The 'user_id' will be provided directly from the Seeder */
         ];
     }
 }

@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Log extends Model
 {
-    //--------------------
-    // CONNECTION PROPERTIES
-    //--------------------
-    
-    // Specify the custom database connection for MongoDB
+    /**
+     * The connection name for the model.
+     */
     protected $connection = 'mongodb';
 
-    // Define the specific collection name within MongoDB
+    /**
+     * The collection associated with the model.
+     */
     protected $collection = 'logs';
 }
