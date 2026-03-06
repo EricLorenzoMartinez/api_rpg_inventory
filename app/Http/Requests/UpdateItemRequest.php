@@ -7,20 +7,20 @@ use Illuminate\Foundation\Http\FormRequest;
 class UpdateItemRequest extends FormRequest
 {
     /**
-     * DETERMINE IF THE USER IS AUTHORIZED TO MAKE THIS REQUEST
+     * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        // Allow the user to proceed with this request
+        /** Allow the user to proceed with this request */
         return true;
     }
 
     /**
-     * GET THE VALIDATION RULES THAT APPLY TO THE REQUEST
+     * Get the validation rules that apply to the request.
      */
     public function rules(): array
     {
-        // Define the validation rules for updating an existing item
+        /** Define the validation rules for updating an existing item */
         return [
             'name' => 'required|string|max:255',
             'type' => 'required|in:weapon,armor,consumable',
@@ -30,26 +30,26 @@ class UpdateItemRequest extends FormRequest
     }
 
     /**
-     * CONFIGURE THE VALIDATOR INSTANCE TO ADD CUSTOM VALIDATION LOGIC
+     * Configure the validator instance to add custom validation logic.
      */
     public function withValidator($validator)
     {
-        // Apply additional business logic validation after standard rules
+        /** Apply additional business logic validation after standard rules */
         $validator->after(function ($validator) {
             $type = $this->input('type');
             $slot = $this->input('slot');
 
-            // Ensure consumables do not have an assigned equipment slot
+            /** Ensure consumables do not have an assigned equipment slot */
             if ($type === 'consumable' && $slot !== null) {
                 $validator->errors()->add('slot', 'Consumables can not be equipped (slot must be null).');
             }
 
-            // Ensure weapons are assigned to the correct weapon slot
+            /** Ensure weapons are assigned to the correct weapon slot */
             if ($type === 'weapon' && $slot !== 'weapon') {
                 $validator->errors()->add('slot', 'Weapons must be equipped in the "weapon" slot.');
             }
 
-            // Ensure armor pieces are assigned to valid equipment slots (head or body)
+            /** Ensure armor pieces are assigned to valid equipment slots (head or body) */
             if ($type === 'armor' && !in_array($slot, ['head', 'body'])) {
                 $validator->errors()->add('slot', 'Armors must be equipped in the "head" or "body" slot.');
             }

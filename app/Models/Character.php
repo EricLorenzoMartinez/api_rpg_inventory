@@ -9,20 +9,30 @@ class Character extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     */
     protected $fillable = [
         'name',
         'level',
         'user_id'
     ];
 
+    /**
+     * Get the user that owns the character.
+     */
     public function user()
     {
-        // Relación obligatoria con users
+        /** Mandatory relationship with users */
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Get the inventory movements for the character.
+     */
     public function inventoryMovements()
     {
+        /** Relationship with inventory movements */
         return $this->hasMany(InventoryMovement::class);
     }
 }
