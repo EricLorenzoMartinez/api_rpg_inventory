@@ -7,16 +7,28 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreItemRequest;
 use App\Http\Requests\UpdateItemRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Http\Request;
 
 class ItemController extends Controller
 {
     /**
      * Display a list of all items.
      */
-    public function index()
+    public function index(Request $request)
     {
-        /** Return all items from the database in JSON format */
-        return response()->json(Item::all());
+        $query = Item::query();
+
+        // Apply filters based on query parameters
+        if ($request->has('type')) {
+            $query->byType($request->input('type'));
+        }
+
+        // Filter equippable items if the parameter is set
+        if ($request->boolean('equippable')) {
+            $query->equippable();
+        }
+
+        return response()->json($query->get());
     }
 
     /**
@@ -37,7 +49,7 @@ class ItemController extends Controller
 
         /** Create the item using validated request data */
         $item = Item::create($request->validated());
-        
+
         /** Return the created item with a 201 status code */
         return response()->json($item, 201);
     }
@@ -61,7 +73,7 @@ class ItemController extends Controller
 
         /** Update the item with the validated data */
         $item->update($request->validated());
-        
+
         /** Return the updated item in the response */
         return response()->json($item);
     }
@@ -76,7 +88,7 @@ class ItemController extends Controller
 
         /** Delete the item from the database */
         $item->delete();
-        
+
         /** Return a 204 No Content response */
         return response()->json(null, 204);
     }
