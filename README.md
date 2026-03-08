@@ -31,4 +31,18 @@ Para asegurar la calidad y consistencia de los datos, hemos querido ir un paso m
 2. **Bonus Elegido: Query Scopes (Filtros Limpios):**
    Hemos implementado el **Bonus A** mediante *Local Scopes* en Eloquent. Hemos creado scopes como `mine()` (para obtener solo los personajes del usuario autenticado), `byType()` y `equippable()` (para filtrar el catálogo). Esto nos ha permitido mantener el código de lectura de la base de datos extremadamente semántico, corto (DRY) y fácil de leer.
 
-[Ver vídeo demostración](https://drive.google.com/file/d/1SneWwD0-4op2q7yGVyroYraAAsNPDGLf/view?usp=sharing)
+## Vídeo Demostración
+
+[Vídeo demostración](https://drive.google.com/file/d/1SneWwD0-4op2q7yGVyroYraAAsNPDGLf/view?usp=sharing)
+
+## Uso de IA
+
+Durante el desarrollo de esta API, hemos utilizado herramientas de inteligencia artificial (IA) para mejorar la calidad del código y acelerar el proceso de desarrollo. Sin embargo, hemos sido muy cuidadosos en no depender exclusivamente de la IA para escribir código funcional, sino más bien como una herramienta de apoyo para refactorizar, optimizar y asegurar la calidad del código. Se puede ver más información sobre el uso de IA en el comentario del issue correspondiente a este bloque: [issue IA](https://github.com/LSG-server-php-laravel/pr-laravel1-laradevs/issues/14).
+
+## Reparto de Tareas
+
+* Eric Lorenzo Martinez: Autenticación, CRUD de items, slot de equipamiento, bonus A (query scopes), Readme.
+* Diego García Senciales: MongoDB logs, endpoint de inventario, lógica de inventario, CRUD de personajes, seeders y factories.
+* Ambos: Arquitectura, creación de roles y policies.
+
+Si se quiere saber más al respecto, se puede consultar el detalle de cada bloque en los issues correspondientes, donde se ha documentado el proceso de desarrollo, los retos encontrados y las decisiones tomadas: [issues](https://github.com/LSG-server-php-laravel/pr-laravel1-laradevs/issues?q=is%3Aissue%20state%3Aclosed).
