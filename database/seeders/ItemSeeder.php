@@ -7,9 +7,9 @@ use App\Models\Item;
 
 class ItemSeeder extends Seeder
 {
-    //--------------------
-    // RUN THE SEEDER
-    //--------------------
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
         // Generate 6 Weapons (assigned to the 'weapon' slot)
@@ -31,7 +31,7 @@ class ItemSeeder extends Seeder
                 'power' => rand(10, 50),
             ]);
         }
-        
+
         for ($i = 1; $i <= 3; $i++) {
             Item::create([
                 'name' => "Pechera de Acero $i",

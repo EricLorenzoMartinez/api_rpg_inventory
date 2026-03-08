@@ -24,7 +24,6 @@ class InventoryMovement extends Model
      */
     public function character()
     {
-        /** Relationship with character */
         return $this->belongsTo(Character::class);
     }
 
@@ -33,7 +32,6 @@ class InventoryMovement extends Model
      */
     public function item()
     {
-        /** Relationship with item */
         return $this->belongsTo(Item::class);
     }
 }

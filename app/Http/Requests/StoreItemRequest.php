@@ -11,7 +11,6 @@ class StoreItemRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        /** Allow the user to proceed with this request */
         return true;
     }
 
@@ -20,7 +19,6 @@ class StoreItemRequest extends FormRequest
      */
     public function rules(): array
     {
-        /** Define the validation rules for creating a new item */
         return [
             'name' => 'required|string|max:255',
             'type' => 'required|in:weapon,armor,consumable',
@@ -35,21 +33,21 @@ class StoreItemRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            /** Extract type and slot from the request input */
+            // Extract type and slot from the request input
             $type = $this->input('type');
             $slot = $this->input('slot');
 
-            /** Validate that consumables do not have an assigned slot */
+            // Validate that consumables do not have an assigned slot
             if ($type === 'consumable' && $slot !== null) {
                 $validator->errors()->add('slot', 'Consumables can not be equipped (slot must be null).');
             }
-            
-            /** Ensure weapons are assigned to the correct slot */
+
+            // Ensure weapons are assigned to the correct slot
             if ($type === 'weapon' && $slot !== 'weapon') {
                 $validator->errors()->add('slot', 'Weapons must be equipped in the "weapon" slot.');
             }
-            
-            /** Ensure armor is assigned to valid equipment slots */
+
+            // Ensure armor is assigned to valid equipment slots
             if ($type === 'armor' && !in_array($slot, ['head', 'body'])) {
                 $validator->errors()->add('slot', 'Armors must be equipped in the "head" or "body" slots.');
             }

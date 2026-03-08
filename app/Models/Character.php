@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Character extends Model
 {
@@ -23,7 +24,6 @@ class Character extends Model
      */
     public function user()
     {
-        /** Mandatory relationship with users */
         return $this->belongsTo(User::class);
     }
 
@@ -32,7 +32,6 @@ class Character extends Model
      */
     public function inventoryMovements()
     {
-        /** Relationship with inventory movements */
         return $this->hasMany(InventoryMovement::class);
     }
 
@@ -41,6 +40,6 @@ class Character extends Model
      */
     public function scopeMine($query)
     {
-        return $query->where('user_id', auth()->id());
+        return $query->where('user_id', Auth::id());
     }
 }

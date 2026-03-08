@@ -7,7 +7,6 @@ use App\Models\Item;
 use App\Models\InventoryMovement;
 use App\Http\Requests\StoreInventoryMovementRequest;
 use App\Services\MongoLogService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class InventoryMovementController extends Controller
@@ -17,20 +16,20 @@ class InventoryMovementController extends Controller
      */
     public function store(StoreInventoryMovementRequest $request, MongoLogService $logService)
     {
-        /** Validate and retrieve the necessary models */
+        // Validate and retrieve the necessary models
         $validated = $request->validated();
         $character = Character::findOrFail($validated['character_id']);
         $item = Item::findOrFail($validated['item_id']);
 
-        /** Authorize the action through policies */
+        // Authorize the action through policies
         Gate::authorize('update', $character);
 
-        /** RPG Business Logic: Check movement type and requirements */
+        // RPG Business Logic: Check movement type and requirements
         $type = $validated['type'];
         $inventoryBalance = $this->calculateItemBalance($character, $item->id);
 
         if ($type === 'EQUIP') {
-            /** Ensure the item exists in inventory and is equipable */
+            // Ensure the item exists in inventory and is equipable
             if ($inventoryBalance <= 0) {
                 return response()->json(['error' => 'You do not have this item in your inventory to equip.'], 400);
             }
@@ -38,27 +37,25 @@ class InventoryMovementController extends Controller
                 return response()->json(['error' => 'This item cannot be equipped (consumable).'], 400);
             }
 
-            /** Verify if the specific equipment slot is already occupied */
+            // Verify if the specific equipment slot is already occupied
             $equipment = $this->getEquipmentData($character);
             if (isset($equipment[$item->slot])) {
                 return response()->json(['error' => 'The slot ' . $item->slot . ' is already occupied.'], 400);
             }
-        }
-        elseif ($type === 'UNEQUIP') {
-            /** Verify if the item is actually equipped */
+        } elseif ($type === 'UNEQUIP') {
+            // Verify if the item is actually equipped
             $equipment = $this->getEquipmentData($character);
-            if (!isset($equipment[$item->slot]) || $equipment[$item->slot]->id !== $item->id) {
+            if ($equipment[$item->slot]?->id !== $item->id) {
                 return response()->json(['error' => 'You do not have this item equipped at the moment.'], 400);
             }
-        }
-        elseif ($type === 'DROP') {
-            /** Verify if there is at least one instance of the item to drop */
+        } elseif ($type === 'DROP') {
+            // Verify if there is at least one instance of the item to drop
             if ($inventoryBalance <= 0) {
                 return response()->json(['error' => 'You do not have this item to drop.'], 400);
             }
         }
 
-        /** Create the inventory movement record */
+        // Create the inventory movement record
         $movement = InventoryMovement::create([
             'character_id' => $character->id,
             'item_id' => $item->id,
@@ -66,7 +63,7 @@ class InventoryMovementController extends Controller
             'executed_at' => now(),
         ]);
 
-        /** Log the activity in the external service */
+        // Log the activity in the external service
         $logService->recordLog(
             action: 'inventory_movement_created',
             userId: $request->user()->id,
@@ -79,7 +76,7 @@ class InventoryMovementController extends Controller
             itemId: $item->id
         );
 
-        /** Return the movement data with a success status */
+        // Return the movement data with a success status
         return response()->json($movement, 201);
     }
 
@@ -88,10 +85,10 @@ class InventoryMovementController extends Controller
      */
     public function inventory(Character $character)
     {
-        /** Check authorization to view character data */
+        // Check authorization to view character data
         Gate::authorize('view', $character);
 
-        /** Process movements to calculate current inventory state */
+        // Process movements to calculate current inventory state
         $movements = $character->inventoryMovements()->with('item')->orderBy('id', 'asc')->get();
         $inventory = [];
 
@@ -121,7 +118,7 @@ class InventoryMovementController extends Controller
             }
         }
 
-        /** Return the processed inventory list */
+        // Return the processed inventory list
         return response()->json(array_values($inventory));
     }
 
@@ -130,7 +127,7 @@ class InventoryMovementController extends Controller
      */
     public function equipment(Character $character)
     {
-        /** Authorize and return the current equipment slots data */
+        // Authorize and return the current equipment slots data
         Gate::authorize('view', $character);
         return response()->json($this->getEquipmentData($character));
     }
@@ -140,14 +137,14 @@ class InventoryMovementController extends Controller
      */
     private function getEquipmentData(Character $character)
     {
-        /** Initialize the standard equipment structure */
+        // Initialize the standard equipment structure
         $equipment = [
             'head' => null,
             'body' => null,
             'weapon' => null,
         ];
 
-        /** Process relevant movements chronologically to determine active equipment */
+        // Process relevant movements chronologically to determine active equipment
         $movements = $character->inventoryMovements()->with('item')
             ->whereIn('type', ['EQUIP', 'UNEQUIP', 'DROP'])
             ->orderBy('executed_at', 'asc')
@@ -156,7 +153,7 @@ class InventoryMovementController extends Controller
         foreach ($movements as $mov) {
             $item = $mov->item;
             if (!$item || !$item->slot) {
-                continue; 
+                continue;
             }
 
             if ($mov->type === 'EQUIP') {
@@ -175,12 +172,16 @@ class InventoryMovementController extends Controller
      */
     private function calculateItemBalance(Character $character, $itemId)
     {
-        /** Calculate the total quantity of a specific item in the inventory */
+        // Calculate the total quantity of a specific item in the inventory
         $movements = $character->inventoryMovements()->where('item_id', $itemId)->get();
         $balance = 0;
         foreach ($movements as $mov) {
-            if ($mov->type === 'LOOT' || $mov->type === 'UNEQUIP') $balance++;
-            if ($mov->type === 'EQUIP' || $mov->type === 'DROP') $balance--;
+            if ($mov->type === 'LOOT' || $mov->type === 'UNEQUIP') {
+                $balance++;
+            }
+            if ($mov->type === 'EQUIP' || $mov->type === 'DROP') {
+                $balance--;
+            }
         }
         return $balance;
     }

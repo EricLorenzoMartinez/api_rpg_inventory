@@ -31,12 +31,9 @@ class ItemController extends Controller
         return response()->json($query->get());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        /** This method is not used in API context */
+        //
     }
 
     /**
@@ -44,13 +41,13 @@ class ItemController extends Controller
      */
     public function store(StoreItemRequest $request)
     {
-        /** Authorize the creation of a new item */
+        // Authorize the creation of a new item
         Gate::authorize('create', Item::class);
 
-        /** Create the item using validated request data */
+        // Create the item using validated request data
         $item = Item::create($request->validated());
 
-        /** Return the created item with a 201 status code */
+        // Return the created item with a 201 status code
         return response()->json($item, 201);
     }
 
@@ -59,7 +56,7 @@ class ItemController extends Controller
      */
     public function show(Item $item)
     {
-        /** Return the details of a single item */
+        // Return the details of a single item
         return response()->json($item);
     }
 
@@ -68,13 +65,13 @@ class ItemController extends Controller
      */
     public function update(UpdateItemRequest $request, Item $item)
     {
-        /** Authorize the update of the specified item */
+        // Authorize the update of the specified item
         Gate::authorize('update', $item);
 
-        /** Update the item with the validated data */
+        // Update the item with the validated data
         $item->update($request->validated());
 
-        /** Return the updated item in the response */
+        // Return the updated item in the response
         return response()->json($item);
     }
 
@@ -83,13 +80,13 @@ class ItemController extends Controller
      */
     public function destroy(Item $item)
     {
-        /** Authorize the deletion of the specified item */
+        // Authorize the deletion of the specified item
         Gate::authorize('delete', $item);
 
-        /** Delete the item from the database */
+        // Delete the item from the database
         $item->delete();
 
-        /** Return a 204 No Content response */
+        // Return a 204 No Content response
         return response()->json(null, 204);
     }
 }

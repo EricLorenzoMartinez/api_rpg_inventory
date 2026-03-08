@@ -10,7 +10,6 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens;
     use HasFactory;
     use Notifiable;
@@ -38,7 +37,6 @@ class User extends Authenticatable
      */
     protected function casts(): array
     {
-        /** Define the casting for security and date attributes */
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',

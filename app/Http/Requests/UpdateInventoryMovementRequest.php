@@ -11,7 +11,7 @@ class UpdateInventoryMovementRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        /** Currently set to false to prevent unauthorized updates */
+        // Currently set to false to prevent unauthorized updates
         return false;
     }
 
@@ -20,7 +20,6 @@ class UpdateInventoryMovementRequest extends FormRequest
      */
     public function rules(): array
     {
-        /** Define the validation rules for updating an inventory movement */
         return [
             //
         ];

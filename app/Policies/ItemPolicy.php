@@ -13,7 +13,6 @@ class ItemPolicy
      */
     public function viewAny(User $user): bool
     {
-        /** Allow all authenticated users to list items */
         return true;
     }
 
@@ -22,7 +21,6 @@ class ItemPolicy
      */
     public function view(User $user, Item $item): bool
     {
-        /** Allow all authenticated users to view item details */
         return true;
     }
 
@@ -31,7 +29,6 @@ class ItemPolicy
      */
     public function create(User $user): bool
     {
-        /** Only users with the admin role can create new items */
         return $user->role === 'admin';
     }
 
@@ -40,7 +37,6 @@ class ItemPolicy
      */
     public function update(User $user, Item $item): bool
     {
-        /** Only users with the admin role can update existing items */
         return $user->role === 'admin';
     }
 
@@ -49,7 +45,6 @@ class ItemPolicy
      */
     public function delete(User $user, Item $item): bool
     {
-        /** Only users with the admin role can delete items */
         return $user->role === 'admin';
     }
 
@@ -58,7 +53,6 @@ class ItemPolicy
      */
     public function restore(User $user, Item $item): bool
     {
-        /** Standard policy set to false by default */
         return false;
     }
 
@@ -67,7 +61,6 @@ class ItemPolicy
      */
     public function forceDelete(User $user, Item $item): bool
     {
-        /** Standard policy set to false by default */
         return false;
     }
 }
