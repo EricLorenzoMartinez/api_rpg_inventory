@@ -42,4 +42,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Get the characters for the user.
+     */
+    public function characters()
+    {
+        return $this->hasMany(Character::class);
+    }
 }
