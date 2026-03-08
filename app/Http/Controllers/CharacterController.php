@@ -15,8 +15,8 @@ class CharacterController extends Controller
      */
     public function index(Request $request)
     {
-        /** Return a JSON response with only the authenticated user's characters */
-        return response()->json($request->user()->characters);
+        $characters = Character::mine()->get();
+        return response()->json($characters);
     }
 
     /**

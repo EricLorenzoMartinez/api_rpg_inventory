@@ -35,4 +35,12 @@ class Character extends Model
         /** Relationship with inventory movements */
         return $this->hasMany(InventoryMovement::class);
     }
+
+    /**
+     * Scope to filter authenticated user's characters.
+     */
+    public function scopeMine($query)
+    {
+        return $query->where('user_id', auth()->id());
+    }
 }
