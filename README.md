@@ -1,48 +1,25 @@
-# README DE LARADEVS
+# ⚔️ RPG Game Backend API
 
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/c8dIICDL)
+A robust RESTful API built with **Laravel** that simulates the backend of a Role-Playing Game (RPG). This project handles user authentication, character management, an item catalog, and complex inventory/equipment mechanics.
 
-## ⚠️ Uso de Issues (obligatorio)
+The core focus of this project is clean architecture, strict responsibility delegation, and adherence to framework best practices (Controllers, Models, Policies, and FormRequests).
 
-Este repositorio incluye **issue templates** que representan los bloques evaluables del proyecto.
-Debes crear los issues a partir de estos templates, **asignártelos a ti mismo**, completar la información solicitada y **cerrarlos únicamente cuando la parte esté correctamente implementada**.
+## ✨ Key Features & Business Logic
 
-La evaluación se realizará en base a los **issues cerrados**.
-Un issue no creado o no cerrado se considerará **no entregado**.
+* **Authentication & Role Management:** Implemented via **Laravel Sanctum**. The API distinguishes between `admin` (global catalog management) and `player` (character management). Security is centralized using **Policies** (`Gate::authorize()`), keeping controllers logic-free.
+* **Dynamic Event-Sourced Inventory:** Instead of relying on a static inventory table, the current state of a character's backpack and equipment (head, body, weapon slots) is calculated on-the-fly. This is achieved by projecting the chronological history of `inventory_movements` (LOOT, EQUIP, UNEQUIP, DROP).
+* **MongoDB Audit Logs:** Every critical action (e.g., character creation, item movement) triggers a parallel, immutable log in a NoSQL database (MongoDB) to ensure complete user traceability.
 
-## Descripción del Proyecto
+## 🚀 Advanced Implementations
 
-Esta API ha sido desarrollada como solución a la Práctica de Laravel, simulando el backend de un videojuego de rol (RPG). El objetivo principal ha sido construir un sistema robusto y seguro que gestione usuarios, personajes, un catálogo de ítems y las mecánicas de inventario y equipamiento.
+* **Complex Validations via Hooks:** Beyond basic Form Requests, we utilized `withValidator` and the `after()` hook for cross-business rules. For example, the API actively blocks equipping consumables or placing armor in weapon slots before the request even reaches the controller.
+* **Eloquent Query Scopes:** Implemented Local Scopes (`mine()`, `byType()`, `equippable()`) to filter the catalog dynamically. This keeps database read operations semantic, DRY, and highly readable.
+* **AI-Assisted Optimization:** Leveraged AI coding assistants to refactor and optimize code quality, ensuring robust architecture.
 
-Nos hemos enfocado en mantener una arquitectura limpia, delegando responsabilidades correctamente y siguiendo las buenas prácticas del framework (separando lógica en Controladores, Modelos, Policies y FormRequests).
+## 👥 Team & Responsibilities
 
-### Características Principales y Lógica de Negocio
+* **Eric Lorenzo:** Authentication, Item CRUD, Equipment Slot Logic, Query Scopes, Documentation.
+* **Diego García:** MongoDB logging, Inventory Endpoints & Logic, Character CRUD, Seeders/Factories.
+* **Shared:** Global Architecture, Roles, and Policies design.
 
-* **Autenticación y Roles:** Implementado con **Laravel Sanctum**. La API distingue entre el rol `admin` (gestiona el catálogo global de ítems) y el rol `player` (gestiona sus propios personajes). Toda la seguridad está centralizada mediante **Policies** usando `Gate::authorize()`, manteniendo los controladores completamente limpios de condicionales.
-* **Inventario Dinámico (Event Sourcing):** El mayor reto ha sido no depender de una tabla estática para el inventario. El estado actual de la mochila y el equipamiento (qué lleva puesto el personaje en la cabeza, cuerpo y arma) se calcula "al vuelo" proyectando el historial cronológico de la tabla `inventory_movements` (LOOT, EQUIP, UNEQUIP, DROP).
-* **Logs en MongoDB:** Cada acción importante (como crear un personaje o mover un ítem) registra de forma paralela un log inmutable en una base de datos documental (MongoDB), manteniendo la trazabilidad del usuario.
-
-### ✨ Extras y Mejoras Implementadas
-
-Para asegurar la calidad y consistencia de los datos, hemos querido ir un paso más allá de los requisitos básicos implementando lo siguiente:
-
-1. **Validaciones Complejas mediante Hooks (`withValidator`):** No nos hemos conformado con las reglas básicas de los Form Requests. Hemos utilizado el método `withValidator` y el hook `after()` para implementar reglas de negocio cruzadas. Por ejemplo, nuestra API bloquea activamente intentos de "equipar consumibles" (exigiendo que su slot sea nulo) o intentos de poner una armadura en el slot de armas, antes de que la petición siquiera llegue al controlador.
-
-2. **Bonus Elegido: Query Scopes (Filtros Limpios):**
-   Hemos implementado el **Bonus A** mediante *Local Scopes* en Eloquent. Hemos creado scopes como `mine()` (para obtener solo los personajes del usuario autenticado), `byType()` y `equippable()` (para filtrar el catálogo). Esto nos ha permitido mantener el código de lectura de la base de datos extremadamente semántico, corto (DRY) y fácil de leer.
-
-## Vídeo Demostración
-
-[Vídeo demostración](https://drive.google.com/file/d/1SneWwD0-4op2q7yGVyroYraAAsNPDGLf/view?usp=sharing)
-
-## Uso de IA
-
-Durante el desarrollo de esta API, hemos utilizado herramientas de inteligencia artificial (IA) para mejorar la calidad del código y acelerar el proceso de desarrollo. Sin embargo, hemos sido muy cuidadosos en no depender exclusivamente de la IA para escribir código funcional, sino más bien como una herramienta de apoyo para refactorizar, optimizar y asegurar la calidad del código. Se puede ver más información sobre el uso de IA en el comentario del issue correspondiente a este bloque: [issue IA](https://github.com/LSG-server-php-laravel/pr-laravel1-laradevs/issues/14).
-
-## Reparto de Tareas
-
-* Eric Lorenzo Martinez: Autenticación, CRUD de items, slot de equipamiento, bonus A (query scopes), Readme.
-* Diego García Senciales: MongoDB logs, endpoint de inventario, lógica de inventario, CRUD de personajes, seeders y factories.
-* Ambos: Arquitectura, creación de roles y policies.
-
-Si se quiere saber más al respecto, se puede consultar el detalle de cada bloque en los issues correspondientes, donde se ha documentado el proceso de desarrollo, los retos encontrados y las decisiones tomadas: [issues](https://github.com/LSG-server-php-laravel/pr-laravel1-laradevs/issues?q=is%3Aissue%20state%3Aclosed).
+🎥 **[Watch the Video Demonstration](https://drive.google.com/file/d/1SneWwD0-4op2q7yGVyroYraAAsNPDGLf/view?usp=sharing)**
