@@ -40,7 +40,7 @@ docker run --rm \
     -u "$(id -u):$(id -g)" \
     -v "$(pwd):/var/www/html" \
     -w /var/www/html \
-    laravelsail/php85-composer:latest \
+    laravelsail/php83-composer:latest \
     composer install --ignore-platform-reqs
 ```
 
@@ -57,9 +57,15 @@ Generate the app key and run database migrations & seeders inside the applicatio
 ./vendor/bin/sail artisan migrate --seed
 ```
 
+### 🗺️ View Available API Endpoints
+To see a complete list of all available routes and their expected HTTP methods (GET, POST, PUT, DELETE), you can run Laravel's route list command inside the container:
+```bash
+./vendor/bin/sail artisan route:list --path=api
+```
+
 ### 🧰 Useful Access Points
 Once the containers are running, you can access the following services:
-* **API Endpoints:** `http://localhost`
+* **API Base URL:** `http://localhost/api` *(Note: Since this is a REST API, use tools like Postman, Insomnia, or Thunder Client to interact with endpoints like `/api/login` or `/api/characters`)*.
 * **phpMyAdmin (MySQL GUI):** `http://localhost:8080`
 * **Mongo-Express (MongoDB GUI):** `http://localhost:8081`
 
