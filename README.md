@@ -4,13 +4,79 @@ A robust RESTful API built with **Laravel** that simulates the backend of a Role
 
 The core focus of this project is clean architecture, strict responsibility delegation, and adherence to framework best practices (Controllers, Models, Policies, and FormRequests).
 
+---
+
+## 🏗️ Infrastructure & Deployment (Docker / Laravel Sail)
+
+This project is fully containerized using Docker, providing a consistent environment across development and production. The infrastructure is orchestrated via a `compose.yaml` file, running multiple interconnected services on a dedicated Docker bridge network.
+
+### 📦 Containerized Services Stack
+* **App Server:** PHP 8.5 via Laravel Sail.
+* **Relational Database:** MySQL 8.4 (for core app data: users, characters, items, inventory movements).
+* **NoSQL Database:** MongoDB (for immutable audit logs).
+* **Database Management Tools:** phpMyAdmin (for MySQL) and Mongo-Express (for MongoDB) included for easy GUI access.
+
+### 🚀 How to Run the Project Locally
+
+To deploy the entire infrastructure on your machine, you only need **Docker** installed. No local PHP or Composer is required.
+
+**1. Clone the repository and navigate to the directory:**
+```bash
+git clone [https://github.com/EricLorenzoMartinez/api_rpg_inventory.git](https://github.com/EricLorenzoMartinez/api_rpg_inventory.git)
+cd api_rpg_inventory
+```
+
+**2. Set up your environment variables:**
+Copy the example file to create your local `.env`:
+```bash
+cp .env.example .env
+```
+*(Ensure your `.env` contains the necessary DB and MongoDB credentials as defined in the `compose.yaml`)*
+
+**3. Install dependencies:**
+Since the `vendor` directory is ignored in git, we use a small temporary Docker container to install the PHP dependencies first. Run this in your terminal:
+```bash
+docker run --rm \
+    -u "$(id -u):$(id -g)" \
+    -v "$(pwd):/var/www/html" \
+    -w /var/www/html \
+    laravelsail/php85-composer:latest \
+    composer install --ignore-platform-reqs
+```
+
+**4. Start the infrastructure:**
+Now that Sail is installed in the vendor folder, you can spin up all containers in detached mode:
+```bash
+./vendor/bin/sail up -d
+```
+
+**5. Initialize the application:**
+Generate the app key and run database migrations & seeders inside the application container:
+```bash
+./vendor/bin/sail artisan key:generate
+./vendor/bin/sail artisan migrate --seed
+```
+
+### 🧰 Useful Access Points
+Once the containers are running, you can access the following services:
+* **API Endpoints:** `http://localhost`
+* **phpMyAdmin (MySQL GUI):** `http://localhost:8080`
+* **Mongo-Express (MongoDB GUI):** `http://localhost:8081`
+
+To stop all services:
+```bash
+./vendor/bin/sail down
+```
+
+---
+
 ## ✨ Key Features & Business Logic
 
 * **Authentication & Role Management:** Implemented via **Laravel Sanctum**. The API distinguishes between `admin` (global catalog management) and `player` (character management). Security is centralized using **Policies** (`Gate::authorize()`), keeping controllers logic-free.
 * **Dynamic Event-Sourced Inventory:** Instead of relying on a static inventory table, the current state of a character's backpack and equipment (head, body, weapon slots) is calculated on-the-fly. This is achieved by projecting the chronological history of `inventory_movements` (LOOT, EQUIP, UNEQUIP, DROP).
 * **MongoDB Audit Logs:** Every critical action (e.g., character creation, item movement) triggers a parallel, immutable log in a NoSQL database (MongoDB) to ensure complete user traceability.
 
-## 🚀 Advanced Implementations
+## 🧠 Advanced Implementations
 
 * **Complex Validations via Hooks:** Beyond basic Form Requests, we utilized `withValidator` and the `after()` hook for cross-business rules. For example, the API actively blocks equipping consumables or placing armor in weapon slots before the request even reaches the controller.
 * **Eloquent Query Scopes:** Implemented Local Scopes (`mine()`, `byType()`, `equippable()`) to filter the catalog dynamically. This keeps database read operations semantic, DRY, and highly readable.
